@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <body>
+
+    Tx data: <input type="text" id="data">
+    <p></p>
+    <button onclick="myFunction()">Parsing</button>
+    
+    <p id="ParseResult"></p>
+
+    <br>
+
+    <script>
+    function myFunction() {
+      //var tt = '<html><body><h2>HTML</h2></body></html>';
+
+      // regexp
+      var p_32bytes = /[\w]{64}/;
+      var p_opening96bytes = /([\w]{64}){3}/g;
+      var p_funcSig = /[\w]{8}/g;
+      var p_openingFuncSig = /[\w]{10}/;
+
+
+      var txData = document.getElementById("data").value;
+      
+
+      txData = removeOpeningFuncSig(txData);
+      
+      getOpeningIndex(txData);
+      
+
+      
+
+      function removeOpeningFuncSig(txData) {
+        var result = txData.match(p_openingFuncSig);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        LFLR();
+        return txData;
+      }
+
+      function getOpeningIndex(txData) {
+        var result = txData.match(p_32bytes);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        LFLR();
+        result = txData.match(p_32bytes);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        LFLR();
+        result = txData.match(p_32bytes);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        LFLR();
+        return txData;
+      }
+
+      function LFLR() {
+        document.getElementById("ParseResult").innerHTML += '<br>';
+      }
+
+
+    }
+    </script>
+
+    </div>
+
+    </body>
+</body>
+</html>
