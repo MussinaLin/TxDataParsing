@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <body>
+
+    Tx data: <input type="text" id="data">
+    <p></p>
+    <button onclick="myFunction()">Parsing</button>
+    
+    <p id="ParseResult"></p>
+
+    <br>
+
+    <script>
+    function myFunction() {
+      //var tt = '<html><body><h2>HTML</h2></body></html>';
+
+      // regexp
+      var p_32bytes = /[\w]{64}/;
+      var p_32bytesG = /[\w]{64}/g;
+      var p_opening96bytes = /([\w]{64}){3}/g;
+      var p_funcSig = /[\w]{8}/g;
+      var p_openingFuncSig = /[\w]{10}/;
+
+
+      var txData = document.getElementById("data").value;
+      
+      // fetch func sig.
+      txData = removeOpeningFuncSig(txData);
+
+      // get index of each array
+      var temp = getOpeningIndex(txData);
+      const openingIndex = temp[0];
+      // txData = temp[1];
+      console.log(openingIndex);
+      console.log(txData);
+
+      // regex group
+      var groupby32Byte = txData.match(p_32bytesG);
+      console.log(groupby32Byte);
+      
+      getTos(openingIndex[0], groupby32Byte)
+
+      function removeOpeningFuncSig(txData) {
+        var result = txData.match(p_openingFuncSig);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        LFCR();
+        return txData;
+      }
+
+      function getOpeningIndex(txData) {
+        const index = [];
+        var result = txData.match(p_32bytes);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        index[0] = parseInt(result, 16);
+        LFCR();
+        result = txData.match(p_32bytes);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        index[1] = parseInt(result, 16);
+        LFCR();
+        result = txData.match(p_32bytes);
+        txData = txData.replace(result, '');
+        document.getElementById("ParseResult").innerHTML += result;
+        index[2] = parseInt(result, 16);
+        LFCR();
+        
+        const r = [index, txData];
+        return r;
+      }
+
+      function getTos(tosIndex, groupby32Byte){
+          tosIndex = tosIndex / 32;
+          let tosCount = parseInt(groupby32Byte[tosIndex], 16);
+          LFCR();
+          for(let i=0;i<=tosCount; i++){
+            document.getElementById("ParseResult").innerHTML += groupby32Byte[tosIndex + i];
+            LFCR();
+          }
+      }
+      
+      
+      function LFCR() {
+        document.getElementById("ParseResult").innerHTML += '<br>';
+      }
+
+
+    }
+    </script>
+
+    </div>
+
+    </body>
+</body>
+</html>
